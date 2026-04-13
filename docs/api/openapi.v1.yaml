@@ -1,0 +1,1000 @@
+openapi: 3.1.0
+info:
+  title: Macros API
+  version: 1.0.0
+  description: Source-of-truth API contract for frontend-backend integration.
+servers:
+  - url: https://api.macros.app
+    description: Production
+  - url: http://localhost:3000
+    description: Local
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Dashboard
+  - name: Foods
+  - name: Workouts
+  - name: Progress
+  - name: Profile
+  - name: Notifications
+  - name: Coaching
+  - name: Admin
+paths:
+  /api/v1/auth/signup:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Create account
+      x-auth-level: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupResponse'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Login
+      x-auth-level: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokensResponse'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Rotate refresh token
+      x-auth-level: public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: New token pair
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Revoke refresh token
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success]
+                properties:
+                  success:
+                    type: boolean
+                    const: true
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/me/navigation-state:
+    get:
+      tags: [Profile]
+      summary: Get nav state
+      x-auth-level: user
+      responses:
+        '200':
+          description: Navigation state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavigationState'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/dashboard/summary:
+    get:
+      tags: [Dashboard]
+      summary: Dashboard summary cards
+      x-auth-level: user
+      responses:
+        '200':
+          description: Summary payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/notifications:
+    get:
+      tags: [Notifications]
+      summary: List notifications
+      x-auth-level: user
+      parameters:
+        - in: query
+          name: unread_only
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Notification list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, unread_count]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  unread_count:
+                    type: integer
+                    minimum: 0
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/foods/search:
+    get:
+      tags: [Foods]
+      summary: Search foods
+      x-auth-level: user
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Foods matched
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, total]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Food'
+                  total:
+                    type: integer
+                    minimum: 0
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/foods/barcode/lookup:
+    post:
+      tags: [Foods]
+      summary: Lookup food by barcode
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [barcode]
+              properties:
+                barcode:
+                  type: string
+      responses:
+        '200':
+          description: Food found
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [food]
+                properties:
+                  food:
+                    $ref: '#/components/schemas/Food'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/foods/custom:
+    post:
+      tags: [Foods]
+      summary: Create custom food item
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomFoodRequest'
+      responses:
+        '201':
+          description: Food created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Food'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/food/logs:
+    post:
+      tags: [Foods]
+      summary: Create structured food log
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFoodLogRequest'
+      responses:
+        '201':
+          description: Food log created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodLog'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/food/logs/quick-add:
+    post:
+      tags: [Foods]
+      summary: Add one food quickly into meal log
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuickAddRequest'
+      responses:
+        '200':
+          description: Added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [log_id, totals_after]
+                properties:
+                  log_id:
+                    type: string
+                  totals_after:
+                    $ref: '#/components/schemas/DailyMacroTotals'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/workouts/active:
+    get:
+      tags: [Workouts]
+      summary: Get current active workout
+      x-auth-level: user
+      responses:
+        '200':
+          description: Active workout session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutSession'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/workouts/history:
+    get:
+      tags: [Workouts]
+      summary: Workout history
+      x-auth-level: user
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Workout summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkoutSummary'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/workouts/{workout_id}/exercises/{exercise_id}/sets:
+    post:
+      tags: [Workouts]
+      summary: Add set to exercise
+      x-auth-level: user
+      parameters:
+        - in: path
+          name: workout_id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: exercise_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSetRequest'
+      responses:
+        '201':
+          description: Set created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkoutSet'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/progress/overview:
+    get:
+      tags: [Progress]
+      summary: Progress dashboard data
+      x-auth-level: user
+      parameters:
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum: [7d, 30d, 90d]
+      responses:
+        '200':
+          description: Progress payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgressOverview'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/me/profile:
+    get:
+      tags: [Profile]
+      summary: Current user profile
+      x-auth-level: user
+      responses:
+        '200':
+          description: Profile payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/me/settings:
+    patch:
+      tags: [Profile]
+      summary: Update current user settings
+      x-auth-level: user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSettingsRequest'
+      responses:
+        '200':
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettings'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/coaching/insights:
+    get:
+      tags: [Coaching]
+      summary: Coaching insight feed
+      x-auth-level: user
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+      responses:
+        '200':
+          description: Insight list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CoachingInsight'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/admin/users:
+    get:
+      tags: [Admin]
+      summary: List users for moderation
+      x-auth-level: admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: cursor
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Admin users
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AdminUser'
+                  next_cursor:
+                    type: string
+                    nullable: true
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/admin/foods/{food_id}/moderation:
+    patch:
+      tags: [Admin]
+      summary: Moderate a custom food
+      x-auth-level: admin
+      parameters:
+        - in: path
+          name: food_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Moderation updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [food_id, status]
+                properties:
+                  food_id:
+                    type: string
+                  status:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+
+  /api/v1/admin/flags/{flag}:
+    patch:
+      tags: [Admin]
+      summary: Update a feature flag
+      x-auth-level: admin
+      parameters:
+        - in: path
+          name: flag
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enabled]
+              properties:
+                enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: Feature flag updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlag'
+        default:
+          $ref: '#/components/responses/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Error:
+      description: Error envelope
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [code, message, request_id]
+      properties:
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: One or more fields are invalid
+        details:
+          type: object
+          additionalProperties: true
+          nullable: true
+        request_id:
+          type: string
+          example: req_01J0R7VY4A7M45FMK0BKQ0V7B8
+
+    SignupRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+
+    SignupResponse:
+      type: object
+      required: [user_id, email_verification_required]
+      properties:
+        user_id:
+          type: string
+        email_verification_required:
+          type: boolean
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+
+    TokenPair:
+      type: object
+      required: [access_token, refresh_token]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+
+    AuthTokensResponse:
+      allOf:
+        - $ref: '#/components/schemas/TokenPair'
+        - type: object
+          required: [user]
+          properties:
+            user:
+              $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      required: [id, email, name, role, tier, calorie_goal, tdee]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        tier:
+          type: string
+        calorie_goal:
+          type: integer
+        tdee:
+          type: integer
+
+    UserSettings:
+      type: object
+      required: [units, notifications, privacy]
+      properties:
+        units:
+          type: object
+          required: [weight, energy]
+          properties:
+            weight:
+              type: string
+              enum: [kg, lb]
+            energy:
+              type: string
+              enum: [kcal, kj]
+        notifications:
+          type: object
+          required: [push_enabled]
+          properties:
+            push_enabled:
+              type: boolean
+        privacy:
+          type: object
+          required: [share_analytics]
+          properties:
+            share_analytics:
+              type: boolean
+
+    UpdateSettingsRequest:
+      allOf:
+        - $ref: '#/components/schemas/UserSettings'
+
+    NavigationState:
+      type: object
+      required: [active_screen, last_visited_at]
+      properties:
+        active_screen:
+          type: string
+          enum: [home, food, workout, progress, profile]
+        last_visited_at:
+          type: string
+          format: date-time
+
+    DailyMacroTotals:
+      type: object
+      required: [calories, protein_g, carbs_g, fats_g]
+      properties:
+        calories:
+          type: number
+        protein_g:
+          type: number
+        carbs_g:
+          type: number
+        fats_g:
+          type: number
+
+    DashboardSummary:
+      type: object
+      required: [calories, macros, weight, adherence]
+      properties:
+        calories:
+          type: object
+          required: [goal, consumed, remaining]
+          properties:
+            goal: { type: integer }
+            consumed: { type: integer }
+            remaining: { type: integer }
+        macros:
+          $ref: '#/components/schemas/DailyMacroTotals'
+        weight:
+          type: object
+          required: [current, unit, trend_7d]
+          properties:
+            current: { type: number }
+            unit: { type: string, enum: [kg, lb] }
+            trend_7d:
+              type: array
+              items: { type: number }
+        adherence:
+          type: object
+          required: [weekly_percent]
+          properties:
+            weekly_percent: { type: number }
+
+    Food:
+      type: object
+      required: [id, name, calories, protein_g, carbs_g, fats_g]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        brand: { type: string, nullable: true }
+        serving_size: { type: string, nullable: true }
+        calories: { type: number }
+        protein_g: { type: number }
+        carbs_g: { type: number }
+        fats_g: { type: number }
+
+    CreateCustomFoodRequest:
+      type: object
+      required: [name, serving_size, nutrients]
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        serving_size:
+          type: string
+        nutrients:
+          type: object
+          required: [calories, protein_g, carbs_g, fats_g]
+          properties:
+            calories: { type: number }
+            protein_g: { type: number }
+            carbs_g: { type: number }
+            fats_g: { type: number }
+
+    FoodLogEntry:
+      type: object
+      required: [food_id, serving_qty, serving_unit]
+      properties:
+        food_id:
+          type: string
+        serving_qty:
+          type: number
+        serving_unit:
+          type: string
+
+    CreateFoodLogRequest:
+      type: object
+      required: [consumed_at, meal_type, entries]
+      properties:
+        consumed_at:
+          type: string
+          format: date-time
+        meal_type:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+        entries:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/FoodLogEntry'
+
+    FoodLog:
+      type: object
+      required: [id, consumed_at, meal_type, entries, totals]
+      properties:
+        id:
+          type: string
+        consumed_at:
+          type: string
+          format: date-time
+        meal_type:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodLogEntry'
+        totals:
+          $ref: '#/components/schemas/DailyMacroTotals'
+
+    QuickAddRequest:
+      type: object
+      required: [food_id, serving_qty, serving_unit, meal_type]
+      properties:
+        food_id: { type: string }
+        serving_qty: { type: number }
+        serving_unit: { type: string }
+        meal_type:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+
+    WorkoutSet:
+      type: object
+      required: [id, reps, weight, rpe, is_completed]
+      properties:
+        id: { type: string }
+        reps: { type: integer }
+        weight: { type: number }
+        rpe: { type: number }
+        is_completed: { type: boolean }
+
+    CreateSetRequest:
+      type: object
+      required: [reps, weight, rpe, is_completed]
+      properties:
+        reps: { type: integer }
+        weight: { type: number }
+        rpe: { type: number }
+        is_completed: { type: boolean }
+
+    WorkoutExercise:
+      type: object
+      required: [id, name, muscle, sets]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        muscle: { type: string }
+        sets:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkoutSet'
+
+    WorkoutSession:
+      type: object
+      required: [id, name, started_at, exercises]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        started_at:
+          type: string
+          format: date-time
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkoutExercise'
+
+    WorkoutSummary:
+      type: object
+      required: [id, name, performed_at, duration_minutes]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        performed_at:
+          type: string
+          format: date-time
+        duration_minutes: { type: integer }
+
+    ProgressOverview:
+      type: object
+      required: [weight_trend, macro_distribution, energy_balance, stats]
+      properties:
+        weight_trend:
+          type: array
+          items:
+            type: object
+            required: [date, value]
+            properties:
+              date: { type: string, format: date }
+              value: { type: number }
+        macro_distribution:
+          type: object
+          required: [protein_kcal, carbs_kcal, fats_kcal]
+          properties:
+            protein_kcal: { type: number }
+            carbs_kcal: { type: number }
+            fats_kcal: { type: number }
+        energy_balance:
+          type: array
+          items:
+            type: object
+            required: [date, intake_kcal, expenditure_kcal]
+            properties:
+              date: { type: string, format: date }
+              intake_kcal: { type: number }
+              expenditure_kcal: { type: number }
+        stats:
+          type: object
+          additionalProperties: true
+
+    CoachingInsight:
+      type: object
+      required: [id, title, text, created_at]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        text: { type: string }
+        created_at:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      required: [id, title, message, is_read, created_at]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        message: { type: string }
+        is_read: { type: boolean }
+        created_at:
+          type: string
+          format: date-time
+
+    AdminUser:
+      type: object
+      required: [id, email, role, created_at]
+      properties:
+        id: { type: string }
+        email: { type: string, format: email }
+        role: { type: string, enum: [user, admin] }
+        created_at:
+          type: string
+          format: date-time
+
+    FeatureFlag:
+      type: object
+      required: [flag, enabled]
+      properties:
+        flag:
+          type: string
+        enabled:
+          type: boolean
