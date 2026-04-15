@@ -1,6 +1,4 @@
-# Compiled JavaScript files
-dist/
-*.js.map
+
 
 # Node modules
 node_modules/
