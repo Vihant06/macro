@@ -23,10 +23,11 @@ async function bootstrap() {
         origin: process.env.NODE_ENV === 'production' ? false : true,
         credentials: true,
     });
-    const port = configService.get('PORT', 3000);
+    const port = process.env.PORT || 3000;
     await app.listen(port);
-    console.log(`🚀 Macro API running on http://localhost:${port}`);
-    console.log(`📊 Environment: ${configService.get('NODE_ENV', 'development')}`);
+
+    console.log(`🚀 Macro API running on port ${port}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
