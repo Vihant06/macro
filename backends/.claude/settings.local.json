@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx claude-code-templates@latest:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
