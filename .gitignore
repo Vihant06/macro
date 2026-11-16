@@ -14,7 +14,16 @@ wheels/
 **/.env.*
 .env.local
 
-# Node & Frontend
+# Jupyter & Notebook artifacts
+*.ipynb
+*.html
+all_cells.py
+extract_*.py
+ge.py
+images.jpg
+main.py
+src/
+
 node_modules/
 **/node_modules/
 .next/
