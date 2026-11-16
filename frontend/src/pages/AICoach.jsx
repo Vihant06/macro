@@ -206,11 +206,10 @@ export default function AICoach() {
     } catch (error) {
       console.error('AI Chat error:', error);
       
+      const serverMsg = error.response?.data?.message;
       const errorMessage = error.response?.status === 429
         ? "You've reached your daily limit of 10 AI requests. See you tomorrow!"
-        : error.response?.status === 503
-          ? "AI Coach is not configured. Add GROQ_API_KEY to backends/.env and restart the backend."
-          : "Sorry, I'm having trouble connecting right now. Please try again later.";
+        : serverMsg || "Sorry, I'm having trouble connecting to the AI Coach right now. Please try again later.";
         
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
