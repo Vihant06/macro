@@ -29,8 +29,13 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' ? false : true,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl) or any web origin
+      callback(null, true);
+    },
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With'],
   });
 
   const port = configService.get<number>('PORT', 3000);
