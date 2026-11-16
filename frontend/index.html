@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Macros - Precision Fitness Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-fixed": "#410007",
+            "on-surface-variant": "#5a4042",
+            "surface-variant": "#e7e1e2",
+            "on-primary-fixed-variant": "#92001c",
+            "secondary": "#b60e3d",
+            "on-tertiary-fixed": "#410005",
+            "on-background": "#1d1b1c",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "primary": "#b7102a",
+            "primary-container": "#db313f",
+            "on-primary": "#ffffff",
+            "background": "#fef8f9",
+            "tertiary-container": "#ce4445",
+            "primary-fixed": "#ffdad8",
+            "surface-tint": "#bb152c",
+            "primary-fixed-dim": "#ffb3b1",
+            "outline-variant": "#e2bec0",
+            "on-secondary-fixed-variant": "#91002d",
+            "on-tertiary-container": "#fffbff",
+            "surface-container-low": "#f8f2f3",
+            "secondary-container": "#da3054",
+            "on-error": "#ffffff",
+            "on-secondary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#ece7e8",
+            "on-tertiary": "#ffffff",
+            "on-primary-container": "#fffbff",
+            "secondary-fixed-dim": "#ffb2b8",
+            "surface-container": "#f2eced",
+            "surface-dim": "#ded9da",
+            "inverse-surface": "#323031",
+            "outline": "#8e6f71",
+            "tertiary-fixed-dim": "#ffb3af",
+            "surface-container-highest": "#e7e1e2",
+            "on-tertiary-fixed-variant": "#8d121d",
+            "on-surface": "#1d1b1c",
+            "inverse-on-surface": "#f5eff0",
+            "on-secondary-container": "#fffbff",
+            "secondary-fixed": "#ffdadb",
+            "inverse-primary": "#ffb3b1",
+            "surface": "#fef8f9",
+            "surface-bright": "#fef8f9",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#40000f",
+            "tertiary-fixed": "#ffdad7",
+            "tertiary": "#ac2b2f"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .vitality-gradient {
+        background: linear-gradient(135deg, #b7102a 0%, #db313f 100%);
+    }
+    .bg-soft-vitality {
+        background: linear-gradient(180deg, #fef8f9 0%, #fcecee 100%);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .pr-glow {
+        box-shadow: 0 0 20px rgba(183, 16, 42, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-soft-vitality min-h-screen text-on-surface font-body">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

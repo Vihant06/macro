@@ -1,0 +1,37 @@
+[project]
+name = "gm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Vihant06", email = "vihantmhabadi947@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.163.1",
+    "google-genai>=2.34.0",
+    "ipykernel>=7.4.0",
+    "langchain>=1.4.7",
+    "langchain-exa>=1.1.0",
+    "langchain-firecrawl>=0.1.0",
+    "langchain-google-genai>=4.4.2",
+    "langchain-nvidia-ai-endpoints>=1.5.0",
+    "langchain-tavily>=0.2.18",
+    "langgraph>=1.2.19",
+    "langgraph-checkpoint-postgres>=3.2.1",
+    "pillow>=13.0.0",
+    "psycopg[binary]>=3.3.9",
+    "pydantic-settings>=2.16.3",
+    "python-dotenv>=1.2.4",
+    "python-jose[cryptography]>=3.5.0",
+    "requests>=2.34.2",
+    "uvicorn[standard]>=0.54.0",
+    "websockets>=17.4",
+]
+
+[project.scripts]
+gm = "gm:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"

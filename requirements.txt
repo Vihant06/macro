@@ -1,0 +1,11 @@
+langchain
+langgraph
+langchain-nvidia-ai-endpoints
+langchain-tavily
+requests
+python-dotenv
+google-genai
+langchain-exa
+langchain-firecrawl
+supabase
+websockets

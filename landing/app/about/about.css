@@ -1,0 +1,552 @@
+/*
+ * About page design system.
+ *
+ * Scoped tokens + component classes for the /about route. Keeping these on
+ * the page means the spacing rhythm, card anatomy and type scale can be
+ * tightened without leaking changes into Home, Pricing or Waitlist.
+ *
+ * Everything lives in @layer components so Tailwind utilities still win.
+ */
+
+:root {
+  --about-section-pad: 3.5rem;
+  --about-heading-gap: 2.5rem;
+  --about-grid-gap: 1.25rem;
+  --about-card-pad: 1.5rem;
+  --about-card-radius: 20px;
+  --about-panel-radius: 24px;
+  --about-icon-size: 3rem;
+  --about-icon-radius: 14px;
+
+  --about-text-body: rgba(238, 243, 255, 0.74);
+  --about-text-soft: rgba(238, 243, 255, 0.62);
+
+  --about-cyan: #6fc8ff;
+  --about-blue: #5b8cff;
+  --about-green: #4ade80;
+  --about-purple: #a78bfa;
+  --about-pink: #f472b6;
+  --about-yellow: #fbbf24;
+  --about-red: #fb7185;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --about-section-pad: 5rem;
+    --about-heading-gap: 3rem;
+    --about-grid-gap: 1.5rem;
+    --about-card-pad: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --about-section-pad: 5.5rem;
+  }
+}
+
+@layer components {
+  /* ---------- section rhythm ---------- */
+
+  .about-section {
+    padding: var(--about-section-pad) 24px;
+  }
+
+  @media (min-width: 768px) {
+    .about-section {
+      padding: var(--about-section-pad) 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-section {
+      padding: var(--about-section-pad) 48px;
+    }
+  }
+
+  .about-head {
+    max-width: 46rem;
+    margin-inline: auto;
+    margin-bottom: var(--about-heading-gap);
+    text-align: center;
+  }
+
+  .about-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+  }
+
+  .about-badge--cyan {
+    color: var(--about-cyan);
+    background: rgba(111, 200, 255, 0.1);
+    border: 1px solid rgba(111, 200, 255, 0.22);
+  }
+
+  .about-badge--green {
+    color: var(--about-green);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.22);
+  }
+
+  .about-title {
+    margin-bottom: 1.25rem;
+    color: #fff;
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: clamp(2rem, 1.3rem + 2.8vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+  }
+
+  .about-lede {
+    max-width: 42rem;
+    margin-inline: auto;
+    color: var(--about-text-body);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  @media (min-width: 768px) {
+    .about-lede {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* ---------- card anatomy ---------- */
+
+  .about-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--about-card-pad);
+    border-radius: var(--about-card-radius);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base),
+      transform var(--transition-base);
+  }
+
+  .about-card:hover {
+    border-color: rgba(111, 200, 255, 0.3);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-4px);
+  }
+
+  .about-card--green:hover {
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+
+  .about-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--about-icon-size);
+    height: var(--about-icon-size);
+    margin-bottom: 1.25rem;
+    border-radius: var(--about-icon-radius);
+    background: rgba(111, 200, 255, 0.1);
+    border: 1px solid rgba(111, 200, 255, 0.2);
+    transition: transform var(--transition-base);
+  }
+
+  .about-card:hover .about-card__icon {
+    transform: scale(1.08);
+  }
+
+  .about-card--green .about-card__icon {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  .about-card__title {
+    margin-bottom: 0.75rem;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .about-card__body {
+    flex: 1 1 auto;
+    color: var(--about-text-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  /* ---------- chips ---------- */
+
+  .about-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .about-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3125rem 0.75rem;
+    border-radius: 9999px;
+    color: var(--about-cyan);
+    background: rgba(111, 200, 255, 0.1);
+    border: 1px solid rgba(111, 200, 255, 0.2);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+
+  .about-chip--green {
+    color: var(--about-green);
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  /* ---------- grids ---------- */
+
+  /*
+   * Auto-flow grid.
+   *
+   * Built on a 2 / 4 / 6 sub-column track system where every card spans two
+   * sub-columns. That keeps the card width identical to a plain 1 / 2 / 3
+   * column grid while still letting a trailing card be re-centred on its own
+   * row with an explicit grid-column placement.
+   */
+  .about-grid-auto {
+    display: grid;
+    gap: var(--about-grid-gap);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .about-grid-auto > * {
+    grid-column: span 2;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid-auto {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .about-grid-auto {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  /* Every row resolves to the same height, so a centred orphan card still
+     matches the row above it. */
+  @media (min-width: 768px) {
+    .about-grid-auto {
+      grid-auto-rows: 1fr;
+    }
+  }
+
+  /* Three-card set: the trailing card centres itself when it lands alone. */
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .about-grid-auto--3 > :nth-child(3) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  /* Five-card set: the closing pair centres under the opening three. */
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .about-grid-auto--5 > :nth-child(5) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .about-grid-auto--5 > :nth-child(4) {
+      grid-column: 2 / span 2;
+    }
+
+    .about-grid-auto--5 > :nth-child(5) {
+      grid-column: 4 / span 2;
+    }
+  }
+
+  .about-stack-gap {
+    margin-top: var(--about-grid-gap);
+  }
+
+  .about-grid-2 {
+    display: grid;
+    gap: var(--about-grid-gap);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+    }
+  }
+
+  .about-grid-3 {
+    display: grid;
+    gap: var(--about-grid-gap);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .about-grid-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .about-grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .about-grid-4 {
+    display: grid;
+    gap: var(--about-grid-gap);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 480px) {
+    .about-grid-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 900px) {
+    .about-grid-4 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .about-grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- full-width panel ---------- */
+
+  .about-panel {
+    padding: var(--about-card-pad);
+    border-radius: var(--about-panel-radius);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .about-panel--cyan {
+    border-color: rgba(111, 200, 255, 0.18);
+  }
+
+  .about-panel--green {
+    border-color: rgba(74, 222, 128, 0.18);
+  }
+
+  .about-panel__head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-panel__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--about-icon-size);
+    height: var(--about-icon-size);
+    border-radius: var(--about-icon-radius);
+    background: rgba(111, 200, 255, 0.1);
+    border: 1px solid rgba(111, 200, 255, 0.2);
+  }
+
+  .about-panel--green .about-panel__icon {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  .about-panel__title {
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 768px) {
+    .about-panel__title {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* ---------- panel items ---------- */
+
+  .about-panel-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    height: 100%;
+    padding: 1.125rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border);
+    transition: border-color var(--transition-base), background var(--transition-base);
+  }
+
+  .about-panel-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(111, 200, 255, 0.25);
+  }
+
+  .about-panel-item--green:hover {
+    border-color: rgba(74, 222, 128, 0.25);
+  }
+
+  .about-panel-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 10px;
+    background: rgba(111, 200, 255, 0.1);
+    border: 1px solid rgba(111, 200, 255, 0.2);
+  }
+
+  .about-panel-item--green .about-panel-item__icon {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  .about-panel-item__title {
+    margin-bottom: 0.25rem;
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .about-panel-item__text {
+    color: var(--about-text-soft);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  /* ---------- metric cards ---------- */
+
+  .about-metric {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.25rem;
+    border-radius: var(--about-card-radius);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border);
+    transition: border-color var(--transition-base), background var(--transition-base);
+  }
+
+  .about-metric:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(74, 222, 128, 0.28);
+  }
+
+  @media (min-width: 768px) {
+    .about-metric {
+      padding: 1.5rem;
+    }
+  }
+
+  .about-metric__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .about-metric__label {
+    margin-bottom: 0.375rem;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .about-metric__text {
+    color: var(--about-text-soft);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  /* ---------- final CTA ---------- */
+
+  .about-cta {
+    max-width: 54rem;
+    margin-inline: auto;
+    padding: 2.5rem 1.5rem;
+    border-radius: 28px;
+    background: var(--color-bg-elevated);
+    border: 1px solid rgba(111, 200, 255, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .about-cta {
+      padding: 3.5rem 3rem;
+    }
+  }
+
+  .about-cta__title {
+    margin-bottom: 1.25rem;
+    color: #fff;
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: clamp(1.875rem, 1.2rem + 2.7vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+
+  .about-cta__body {
+    max-width: 34rem;
+    margin: 0 auto 2rem;
+    color: var(--about-text-body);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  @media (min-width: 768px) {
+    .about-cta__body {
+      font-size: 1.125rem;
+    }
+  }
+
+  /* ---------- icon tones ---------- */
+
+  .about-tone-cyan { color: var(--about-cyan); }
+  .about-tone-blue { color: var(--about-blue); }
+  .about-tone-green { color: var(--about-green); }
+  .about-tone-purple { color: var(--about-purple); }
+  .about-tone-pink { color: var(--about-pink); }
+  .about-tone-yellow { color: var(--about-yellow); }
+  .about-tone-red { color: var(--about-red); }
+}
